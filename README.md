@@ -14,6 +14,7 @@ No secrets are stored in code, Streamlit configuration files, or SQL queries.
 ---
 
 ## Architecture Summary 
+<img width="892" height="487" alt="image" src="https://github.com/user-attachments/assets/e9a98def-41f9-4f8e-b779-f25c55412608" />
 
 
 

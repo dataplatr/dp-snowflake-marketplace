@@ -15,12 +15,11 @@ No secrets are stored in code, Streamlit configuration files, or SQL queries.
 
 ## Architecture Summary
 
-![AI-ELT Native App Architecture](https://github.com/dataplatr/dp-snowflake-marketplace/blob/main/Architecture.jpg)
-
 The application is built using **Streamlit** and runs securely inside **Snowpark Container Services (SPCS)**.
 It relies on Snowflake-managed authentication, secrets, and external access controls to enable AI-driven ELT workflows while maintaining strict security boundaries.
 
----
+![SNF AI-ELT Platform Architecture](https://github.com/dataplatr/dp-snowflake-marketplace/blob/main/Architecture.jpg)
+
 
 ## Core Application Modules
 
@@ -220,4 +219,13 @@ SHOW REFERENCES IN APPLICATION <APP_NAME>;
   * SQL is validated and only pushed to GitHub after review and approval.
 
 
+---
 
+## Installation Summary Checklist
+
+* Snowflake compute pool created
+* Network Rule and External Access Integration configured
+* Secrets created and granted to the application
+* GitHub and Vertex AI integrations verified
+
+---

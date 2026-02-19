@@ -202,6 +202,15 @@ CALL <APP_NAME>.CONFIG.REGISTER_EAI_CALLBACK(
 ```sql
 SHOW REFERENCES IN APPLICATION <APP_NAME>;
 ```
+---
+
+### Step 6: Finalize in the App UI
+
+Launch the Streamlit App and navigate to the **Configuration** module.  
+The app will automatically resolve the bound secrets to:
+
+- **Authorize Vertex AI**: Enables the AI engine to generate ELT logic.
+- **Connect to GitHub Staging**: Enables the app to write generated models directly to your in-house dbt project repository.
 
 ---
 
@@ -229,3 +238,4 @@ SHOW REFERENCES IN APPLICATION <APP_NAME>;
 * GitHub and Vertex AI integrations verified
 
 ---
+

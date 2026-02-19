@@ -1,8 +1,8 @@
-# SNF AI-ELT Platform — Consumer Installation & Quick Start Guide
+# AI-ELT Native App — Consumer Installation & Quick Start Guide
 
 ## Overview
 
-The **SNF AI-ELT Platform** is a Snowflake Native Application running on **Snowflake Container Services (SPCS)** with a Streamlit UI.
+The **AI-ELT Native App** is a Snowflake Native Application running on **Snowflake Container Services (SPCS)** with a Streamlit UI.
 It helps consumers generate and manage AI-driven ELT workflows and integrates securely with external services such as:
 
 * **GitHub** – for repository access and file pushes
@@ -15,7 +15,7 @@ No secrets are stored in code, Streamlit configuration files, or SQL queries.
 
 ## Architecture Summary
 
-![SNF AI-ELT Platform Architecture](https://github.com/dataplatr/dp-snowflake-marketplace/blob/main/Architecture.jpg)
+![AI-ELT Native App Architecture](https://github.com/dataplatr/dp-snowflake-marketplace/blob/main/Architecture.jpg)
 
 The application is built using **Streamlit** and runs securely inside **Snowpark Container Services (SPCS)**.
 It relies on Snowflake-managed authentication, secrets, and external access controls to enable AI-driven ELT workflows while maintaining strict security boundaries.
@@ -219,14 +219,5 @@ SHOW REFERENCES IN APPLICATION <APP_NAME>;
   * SQL can be edited directly or modified using plain English prompts.
   * SQL is validated and only pushed to GitHub after review and approval.
 
----
 
-## Installation Summary Checklist
-
-* Snowflake compute pool created
-* Network Rule and External Access Integration configured
-* Secrets created and granted to the application
-* GitHub and Vertex AI integrations verified
-
----
 

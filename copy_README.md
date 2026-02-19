@@ -20,7 +20,7 @@ It relies on Snowflake-managed authentication, secrets, and external access cont
 
 ![SNF AI-ELT Platform Architecture](https://github.com/dataplatr/dp-snowflake-marketplace/blob/main/Architecture.jpg)
 
-
+---
 ## Core Application Modules
 
 The application is organized into five primary functional areas accessible via the sidebar navigation menu:
@@ -238,4 +238,5 @@ The app will automatically resolve the bound secrets to:
 * GitHub and Vertex AI integrations verified
 
 ---
+
 

@@ -99,6 +99,8 @@ Before installing the application, ensure you have:
 * A Google Cloud service account with Vertex AI permissions
 * A downloadable JSON key file
 
+
+
 ---
 
 ## Step-by-Step Installation
@@ -109,7 +111,7 @@ After installing the application from the Snowflake Marketplace, the Account Adm
 
 ### Step 1: Create Secure Secrets
 
-Sensitive credentials must be stored in Snowflake’s encrypted Secret objects.
+Create the required Snowflake secrets to store GitHub and Vertex AI credentials securely.
 
 ```sql
 USE ROLE ACCOUNTADMIN;
@@ -119,31 +121,35 @@ CREATE OR REPLACE SECRET snf_git_secret
   USERNAME = '<your_github_username>'
   PASSWORD = '<your_github_personal_access_token>';
 
+DESCRIBE SECRET snf_git_secret;
+
 CREATE OR REPLACE SECRET vertex_sa
   TYPE = GENERIC_STRING
   SECRET_STRING = $$
-  {
-    "type": "service_account",
-    "project_id": "your-project-id",
-    "private_key_id": "...",
-    "private_key": "...",
-    "client_email": "...",
-    "client_id": "...",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "..."
-  }
-  $$;
+{
+  "type": "service_account",
+  "project_id": "your-project-id",
+  "private_key_id": "...",
+  "private_key": "...",
+  "client_email": "...",
+  "client_id": "...",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "..."
+}
+$$;
 ```
 
 ---
 
-### Step 2: Define the Network Rule
+### Step 2: Create the Network Rule
 
-Specify the egress endpoints allowed for the application.
+Create a network rule that allows outbound access to the required external endpoints.
 
 ```sql
+USE ROLE ACCOUNTADMIN;
+
 CREATE OR REPLACE NETWORK RULE github_pypi_gcp_network_rule
   TYPE = HOST_PORT
   MODE = EGRESS
@@ -166,21 +172,24 @@ CREATE OR REPLACE NETWORK RULE github_pypi_gcp_network_rule
 
 ### Step 3: Create the External Access Integration (EAI)
 
-This bridge connects the Network Rule and the Secrets.
+Create an External Access Integration using the network rule and attach the secrets.
 
 ```sql
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION snf_native_eai
   ALLOWED_NETWORK_RULES = (github_pypi_gcp_network_rule)
-  ALLOWED_AUTHENTICATION_SECRETS = (snf_git_secret, vertex_sa)
+  ALLOWED_AUTHENTICATION_SECRETS = (
+    <DB_NAME>.<SCHEMA_NAME>.snf_git_secret,
+    <DB_NAME>.<SCHEMA_NAME>.vertex_sa
+  )
   ENABLED = TRUE;
-
-GRANT USAGE ON SECRET snf_git_secret TO APPLICATION <APP_NAME>;
-GRANT USAGE ON SECRET vertex_sa TO APPLICATION <APP_NAME>;
 ```
 
 ---
 
-### Step 4: Bind the EAI to the Application
+### Step 4: Bind the External Access Integration to the Application
+
+Bind the External Access Integration to the application reference.
+(This step can be performed via Snowsight when the configuration page appears after installation.)
 
 ```sql
 CALL <APP_NAME>.CONFIG.REGISTER_EAI_CALLBACK(
@@ -195,16 +204,73 @@ CALL <APP_NAME>.CONFIG.REGISTER_EAI_CALLBACK(
 );
 ```
 
----
-
-### Step 5: Verify the Configuration
+Verify the binding:
 
 ```sql
 SHOW REFERENCES IN APPLICATION <APP_NAME>;
 ```
+
 ---
 
-### Step 6: Finalize in the App UI
+### Step 5: Register Secrets with the Application
+
+Register the secrets with the application using the secret callback procedures.
+
+```sql
+CALL <APP_NAME>.CONFIG.REGISTER_SECRET_CALLBACK(
+  'snf_git_secret',
+  'ADD',
+  SYSTEM$REFERENCE(
+    'SECRET',
+    '<DB_NAME>.<SCHEMA_NAME>.snf_git_secret',
+    'PERSISTENT',
+    'READ'
+  )
+);
+
+CALL <APP_NAME>.CONFIG.REGISTER_SECRET_CALLBACK(
+  'vertex_sa',
+  'ADD',
+  SYSTEM$REFERENCE(
+    'SECRET',
+    '<DB_NAME>.<SCHEMA_NAME>.vertex_sa',
+    'PERSISTENT',
+    'READ'
+  )
+);
+```
+
+---
+
+### Step 6: Activate and Verify Application Services
+
+Activate the application services:
+
+```sql
+CALL <APP_NAME>.CONFIG.START_SERVICE();
+```
+
+Verify that the services are running:
+
+```sql
+SHOW SERVICES IN APPLICATION <APP_NAME>;
+```
+
+---
+
+### Step 7: Proceed to the Application
+
+Once the services are running successfully, proceed to the application from Snowflake.
+
+---
+
+### Step 8: Launch the Application
+
+Launch the Streamlit application and begin using the platform.
+
+---
+
+### Post-Activation: Finalize in the App UI
 
 Launch the Streamlit App and navigate to the **Configuration** module.  
 The app will automatically resolve the bound secrets to:
@@ -238,5 +304,6 @@ The app will automatically resolve the bound secrets to:
 * GitHub and Vertex AI integrations verified
 
 ---
+
 
 
